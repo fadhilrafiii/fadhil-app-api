@@ -10,7 +10,9 @@
     "express",
     "<THIRD_PARTY_MODULES>",
     "^routes",
-    "^controller"
+    "^controller",
+    "^models",
+    "^helpers"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
