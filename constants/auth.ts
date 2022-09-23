@@ -1,0 +1,1 @@
+export const JWT_EXPIRY_SECONDS = 86400;

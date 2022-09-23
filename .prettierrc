@@ -13,7 +13,8 @@
     "^controller",
     "^models",
     "^middlwares",
-    "^helpers"
+    "^helpers",
+    "^constants"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
