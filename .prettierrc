@@ -12,6 +12,7 @@
     "^routes",
     "^controller",
     "^models",
+    "^middlwares",
     "^helpers"
   ],
   "importOrderSeparation": true,

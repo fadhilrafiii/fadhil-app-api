@@ -1,8 +1,17 @@
-import { model, Schema } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 import { isEmail } from 'helpers/validator/string';
 
-const UserSchema = new Schema(
+export interface IUser extends Document {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName?: string;
+  password: string;
+  avatar?: string;
+}
+
+const UserSchema: Schema<IUser> = new Schema<IUser>(
   {
     username: {
       type: String,
@@ -36,5 +45,4 @@ const UserSchema = new Schema(
   { timestamps: true },
 );
 
-const User = model('User', UserSchema);
-export default User;
+export default model<IUser>('User', UserSchema);

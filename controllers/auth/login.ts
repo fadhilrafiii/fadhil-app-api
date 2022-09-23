@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 import bcrypt from 'bcrypt';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 
-import User from 'models/User';
+import User, { IUser } from 'models/User';
 
-import { getErrorResponse, getSuccessResponse } from 'helpers/response';
+import { ErrorResponse, SuccessResponse } from 'helpers/response';
 import { validateRequest } from 'helpers/validator/request';
 
 const loginSchema = Joi.object()
@@ -15,11 +15,19 @@ const loginSchema = Joi.object()
     email: Joi.string(),
     password: Joi.string().required(),
   })
-  .or('username', 'email');
+  .or('username', 'email')
+  .label('Request body');
 
-export const loginController = async (req: Request, res: Response) => {
+export const loginController: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const { username, email, password } = await validateRequest(loginSchema, req.body);
+    const { username, email, password }: IUser = await validateRequest<IUser>(
+      loginSchema,
+      req.body,
+    );
 
     const user = await User.findOne({
       $or: [{ email }, { username }],
@@ -30,11 +38,14 @@ export const loginController = async (req: Request, res: Response) => {
     const isPasswordTrue = await bcrypt.compare(password, user.password);
     if (!isPasswordTrue) throw 'Wrong password!';
 
-    const secretKey: string = process.env.JWT_SECRET_KEY || '';
-    const token = jwt.sign({ _id: user._id }, secretKey);
+    const secretKey = process.env.JWT_SECRET_KEY;
+    if (!secretKey) throw new ErrorResponse('"Secret key not found, can\'t check password!', 500);
 
-    return getSuccessResponse(res, { token });
-  } catch (error: any) {
-    return getErrorResponse(res, error);
+    const token = jwt.sign({ _id: user._id }, secretKey);
+    const response = new SuccessResponse({ token }, 'Login success!');
+
+    res.status(response.status).json(response);
+  } catch (error) {
+    next(error);
   }
 };

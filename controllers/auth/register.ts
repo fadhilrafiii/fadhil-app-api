@@ -1,11 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 import bcrypt from 'bcrypt';
 import Joi from 'joi';
+import jwt from 'jsonwebtoken';
 
 import User from 'models/User';
 
-import { getErrorResponse, getSuccessResponse } from 'helpers/response';
+import { ErrorResponse, SuccessResponse } from 'helpers/response';
 import { validateRequest } from 'helpers/validator/request';
 
 const registerSchema = Joi.object().keys({
@@ -19,7 +20,11 @@ const registerSchema = Joi.object().keys({
 
 export default registerSchema;
 
-export const registerController = async (req: Request, res: Response) => {
+export const registerController: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const payload = await validateRequest(registerSchema, req.body);
 
@@ -30,8 +35,14 @@ export const registerController = async (req: Request, res: Response) => {
     const newUser = new User(payload);
     await newUser.save();
 
-    return getSuccessResponse(res, newUser);
+    const secretKey = process.env.JWT_SECRET_KEY;
+    if (!secretKey) throw new ErrorResponse("Secret key not found, can't check password!", 500);
+
+    const token = jwt.sign({ _id: newUser._id }, secretKey);
+    const response = new SuccessResponse({ token }, 'Registration Success!');
+
+    res.status(response.status).json(response);
   } catch (error) {
-    return getErrorResponse(res, error);
+    next(error);
   }
 };

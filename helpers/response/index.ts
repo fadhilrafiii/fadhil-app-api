@@ -1,19 +1,23 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
-export const getSuccessResponse = (
-  res: Response,
-  data: any,
-  message = 'Success fetching API',
-  status = 200,
-) => {
-  return res.status(status).json({ data, message, status });
-};
+export class SuccessResponse {
+  data!: Record<string, unknown>;
+  message!: string;
+  status!: number;
 
-export const getErrorResponse = (
-  res: Response,
-  error: any,
-  message = 'Failed fetching API',
-  status = 400,
-) => {
-  return res.status(status).json({ error, message, status });
-};
+  constructor(data: Record<string, unknown>, message: string = '', status: number = 200) {
+    this.data = data;
+    this.message = message;
+    this.status = status;
+  }
+}
+
+export class ErrorResponse {
+  message!: string;
+  status!: number;
+
+  constructor(message: string, status: number = 500) {
+    this.message = message;
+    this.status = status;
+  }
+}
