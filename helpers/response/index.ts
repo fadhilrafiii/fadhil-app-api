@@ -1,11 +1,9 @@
-import { Request, Response } from 'express';
-
 export class SuccessResponse {
-  data!: Record<string, unknown>;
+  data: unknown;
   message!: string;
   status!: number;
 
-  constructor(data: Record<string, unknown>, message: string = '', status: number = 200) {
+  constructor(data: unknown, message: string = '', status: number = 200) {
     this.data = data;
     this.message = message;
     this.status = status;

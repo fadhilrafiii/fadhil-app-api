@@ -18,8 +18,6 @@ const registerSchema = Joi.object().keys({
   avatar: Joi.string(),
 });
 
-export default registerSchema;
-
 export const registerController: RequestHandler = async (
   req: Request,
   res: Response,
@@ -30,15 +28,14 @@ export const registerController: RequestHandler = async (
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(payload.password, salt);
-    payload.password = hashedPassword;
 
-    const newUser = new User(payload);
+    const newUser = new User({ ...payload, password: hashedPassword });
     await newUser.save();
 
     const secretKey = process.env.JWT_SECRET_KEY;
     if (!secretKey) throw new ErrorResponse("Secret key not found, can't check password!", 500);
 
-    const token = jwt.sign({ _id: newUser._id }, secretKey);
+    const token = jwt.sign(newUser.toObject(), secretKey);
     const response = new SuccessResponse({ token }, 'Registration Success!');
 
     res.status(response.status).json(response);

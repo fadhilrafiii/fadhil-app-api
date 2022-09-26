@@ -31,12 +31,9 @@ export const loginController: RequestHandler = async (
       req.body,
     );
 
-    const user = (
-      await User.findOne({
-        $or: [{ email }, { username }],
-      })
-    )?.toObject();
-
+    const user = await User.findOne({
+      $or: [{ email }, { username }],
+    });
     if (!user) throw new ErrorResponse('User not found, wrong username!', 400);
 
     const isPasswordTrue = await bcrypt.compare(password, user.password);
@@ -45,14 +42,16 @@ export const loginController: RequestHandler = async (
     const secretKey = process.env.JWT_SECRET_KEY;
     if (!secretKey) throw new ErrorResponse("Secret key not found, can't check password!", 500);
 
-    const token = jwt.sign(user, secretKey, {
+    const token = jwt.sign(user.toObject(), secretKey, {
       algorithm: 'HS256',
       expiresIn: JWT_EXPIRY_SECONDS,
     });
     const response = new SuccessResponse({ token }, 'Login success!');
 
-    res.cookie('token', token, { maxAge: JWT_EXPIRY_SECONDS * 1000 });
-    res.status(response.status).json(response);
+    res
+      .cookie('token', token, { maxAge: JWT_EXPIRY_SECONDS * 1000 })
+      .status(response.status)
+      .json(response);
   } catch (error) {
     next(error);
   }

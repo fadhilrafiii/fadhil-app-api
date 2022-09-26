@@ -1,10 +1,13 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express } from 'express';
 
 import dotenv from 'dotenv';
-import { errorHandler } from 'middlewares/errorHandler';
 import mongoose, { ConnectOptions } from 'mongoose';
 
+import activityRoutes from 'routes/activityRoutes';
 import authRoutes from 'routes/authRoutes';
+
+import authorize from 'middlewares/authorize';
+import errorHandler from 'middlewares/errorHandler';
 
 dotenv.config();
 
@@ -13,6 +16,7 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/activities', authorize, activityRoutes);
 
 // Client Error handler
 app.use(errorHandler);

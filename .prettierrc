@@ -12,7 +12,7 @@
     "^routes",
     "^controller",
     "^models",
-    "^middlwares",
+    "^middlewares",
     "^helpers",
     "^constants"
   ],
