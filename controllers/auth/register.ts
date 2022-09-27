@@ -15,7 +15,7 @@ const registerSchema = Joi.object().keys({
   firstName: Joi.string().required(),
   lastName: Joi.string(),
   password: Joi.string().required(),
-  avatar: Joi.string(),
+  avatar: Joi.string().allow('', null),
 });
 
 export const registerController: RequestHandler = async (

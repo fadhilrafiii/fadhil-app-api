@@ -11,14 +11,10 @@ import { validateRequest } from 'helpers/validator/request';
 
 import { JWT_EXPIRY_SECONDS } from 'constants/auth';
 
-const loginSchema = Joi.object()
-  .keys({
-    username: Joi.string(),
-    email: Joi.string(),
-    password: Joi.string().min(6).required(),
-  })
-  .or('username', 'email')
-  .label('Request body');
+const loginSchema = Joi.object().keys({
+  username: Joi.string().required(),
+  password: Joi.string().min(6).required(),
+});
 
 export const loginController: RequestHandler = async (
   req: Request,
@@ -26,13 +22,10 @@ export const loginController: RequestHandler = async (
   next: NextFunction,
 ) => {
   try {
-    const { username, email, password }: IUser = await validateRequest<IUser>(
-      loginSchema,
-      req.body,
-    );
+    const { username, password }: IUser = await validateRequest<IUser>(loginSchema, req.body);
 
     const user = await User.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email: username }, { username }],
     });
     if (!user) throw new ErrorResponse('User not found, wrong username!', 400);
 
@@ -46,7 +39,13 @@ export const loginController: RequestHandler = async (
       algorithm: 'HS256',
       expiresIn: JWT_EXPIRY_SECONDS,
     });
-    const response = new SuccessResponse({ token }, 'Login success!');
+
+    const userObject = user.toObject();
+    delete userObject.password;
+    delete userObject._id;
+    delete userObject.createdAt;
+    delete userObject.updatedAt;
+    const response = new SuccessResponse(userObject, 'Login success!');
 
     res
       .cookie('token', token, { maxAge: JWT_EXPIRY_SECONDS * 1000 })

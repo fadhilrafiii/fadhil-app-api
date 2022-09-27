@@ -6,8 +6,6 @@ import User, { IUser } from 'models/User';
 
 import { ErrorResponse, SuccessResponse } from 'helpers/response';
 
-import { JWT_EXPIRY_SECONDS } from 'constants/auth';
-
 export const authenticateController: RequestHandler = async (
   req: Request,
   res: Response,
@@ -29,13 +27,15 @@ export const authenticateController: RequestHandler = async (
 
         const user = await User.findById((result as IUser)?._id);
 
-        if (!user) next(new ErrorResponse('User not found! Please try re-login', 401));
+        if (!user) throw new ErrorResponse('User not found! Please try re-login', 401);
 
-        const response = new SuccessResponse({ token }, 'Authenticate success!');
-        res
-          .cookie('token', token, { maxAge: JWT_EXPIRY_SECONDS * 1000 })
-          .status(response.status)
-          .json(response);
+        const userObject = user.toObject();
+        delete userObject.password;
+        delete userObject._id;
+        delete userObject.createdAt;
+        delete userObject.updatedAt;
+        const response = new SuccessResponse(userObject, 'Authenticate success!');
+        res.status(response.status).json(response);
       },
     );
   } catch (error) {

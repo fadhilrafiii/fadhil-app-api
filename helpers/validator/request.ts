@@ -9,6 +9,6 @@ export const validateRequest = async <T>(schema: ObjectSchema, content: T): Prom
 
     return validatedContent.value;
   } catch (error: unknown) {
-    throw new ErrorResponse(error as string);
+    throw new ErrorResponse(error as string, 422);
   }
 };
