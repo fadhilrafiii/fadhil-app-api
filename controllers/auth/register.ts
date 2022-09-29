@@ -2,11 +2,10 @@ import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 import bcrypt from 'bcrypt';
 import Joi from 'joi';
-import jwt from 'jsonwebtoken';
 
 import User from 'models/User';
 
-import { ErrorResponse, SuccessResponse } from 'helpers/response';
+import { SuccessResponse } from 'helpers/response';
 import { validateRequest } from 'helpers/validator/request';
 
 const registerSchema = Joi.object().keys({
@@ -32,11 +31,14 @@ export const registerController: RequestHandler = async (
     const newUser = new User({ ...payload, password: hashedPassword });
     await newUser.save();
 
-    const secretKey = process.env.JWT_SECRET_KEY;
-    if (!secretKey) throw new ErrorResponse("Secret key not found, can't check password!", 500);
+    req.session.userId = newUser._id;
 
-    const token = jwt.sign(newUser.toObject(), secretKey);
-    const response = new SuccessResponse({ token }, 'Registration Success!');
+    const userObject = newUser.toObject();
+    delete userObject.password;
+    delete userObject._id;
+    delete userObject.createdAt;
+    delete userObject.updatedAt;
+    const response = new SuccessResponse(userObject, 'Registration Success!');
 
     res.status(response.status).json(response);
   } catch (error) {

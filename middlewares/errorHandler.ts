@@ -17,11 +17,11 @@ const errorHandler = (
   if (error instanceof TypeError || error instanceof ErrorResponse) {
     if (error instanceof TypeError) res.status(500).json(error);
     else res.status(error.status).json(error);
+  } else {
+    // This is handler for Mongo Error
+    const mongoError = new ErrorResponse((error as MongooseError).message, 400);
+    res.status(400).json(mongoError);
   }
-
-  // This is handler for Mongo Error
-  const mongoError = new ErrorResponse((error as MongooseError).message, 400);
-  res.status(400).json(mongoError);
 };
 
 export default errorHandler;
