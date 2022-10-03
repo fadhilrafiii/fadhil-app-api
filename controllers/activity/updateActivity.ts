@@ -11,9 +11,9 @@ const updateActivitySchema = Joi.object().keys({
   name: Joi.string(),
   description: Joi.string(),
   priority: Joi.string().valid(...Object.values(ActivityPriorityEnum)),
-  deadline: Joi.date(),
+  deadline: Joi.date().allow(null),
   difficulty: Joi.string().valid(...Object.values(ActivityDifficultyEnum)),
-  schedule: Joi.date(),
+  schedule: Joi.date().allow(null),
   // prerequisites: Joi.array().items(Joi.string()), || Not handled yet!!!
   subTask: Joi.array().items(Joi.string()),
   isHabit: Joi.boolean(),

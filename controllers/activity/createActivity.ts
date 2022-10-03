@@ -14,11 +14,11 @@ const createActivitySchema = Joi.object().keys({
   priority: Joi.string()
     .valid(...Object.values(ActivityPriorityEnum))
     .required(),
-  deadline: Joi.date(),
+  deadline: Joi.date().allow(null),
   difficulty: Joi.string()
     .valid(...Object.values(ActivityDifficultyEnum))
     .required(),
-  schedule: Joi.date(),
+  schedule: Joi.date().allow(null),
   prerequisites: Joi.array().items(Joi.string()),
   subTask: Joi.array().items(Joi.string()),
   isHabit: Joi.boolean().default(false),
