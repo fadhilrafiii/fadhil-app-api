@@ -14,7 +14,7 @@ export const deleteActivity: RequestHandler = async (
 
     const { deletedCount }: { deletedCount: number } = await Activity.deleteOne({
       _id,
-      userId: req.user._id,
+      userId: req.session.userId,
     });
 
     let response;

@@ -33,7 +33,7 @@ export const createActivity: RequestHandler = async (
     const payload = await validateRequest(createActivitySchema, req.body);
     const noteColor = generateActivityColors();
 
-    const newActivity = new Activity({ ...payload, userId: req.user._id, color: noteColor });
+    const newActivity = new Activity({ ...payload, userId: req.session.userId, color: noteColor });
     await newActivity.save();
 
     const response = new SuccessResponse(newActivity, 'Create Activity Success!');
