@@ -4,7 +4,7 @@ import Joi from 'joi';
 
 import Activity from 'models/Activity';
 
-import { getTaskFilterFromQuery } from 'helpers/activity';
+import { getActivityFilterFromQuery, getRecommendedActivties } from 'helpers/activity';
 import { SuccessResponse } from 'helpers/response';
 import { validateRequest } from 'helpers/validator/request';
 
@@ -19,11 +19,18 @@ export const getActivities: RequestHandler = async (
 ) => {
   try {
     const query = await validateRequest(getActivityQuerySchema, req.query);
-    const filter = getTaskFilterFromQuery(query);
 
-    const activities = await Activity.find({ ...filter, userId: req.session.userId }).sort(
-      '-updatedAt',
-    );
+    let activities = [];
+    if (query.type === 'Recommended') {
+      activities = await Activity.find({ userId: req.session.userId });
+      activities = getRecommendedActivties(activities);
+    } else {
+      const filter = getActivityFilterFromQuery(query);
+
+      activities = await Activity.find({ ...filter, userId: req.session.userId }).sort(
+        '-updatedAt',
+      );
+    }
 
     const response = new SuccessResponse(activities, 'Get Activities Success!');
 

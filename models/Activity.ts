@@ -16,6 +16,22 @@ export enum ActivityDifficultyEnum {
   VERY_EASY = 'Very Easy',
 }
 
+export const ActivityPriorityValue: Record<string, number> = {
+  'Very High': 5,
+  High: 4,
+  Medium: 3,
+  Low: 2,
+  'Very Low': 1,
+};
+
+export const ActivityDifficultyValue: Record<string, number> = {
+  'Very Hard': 5,
+  Hard: 4,
+  Medium: 3,
+  Easy: 2,
+  'Very Easy': 1,
+};
+
 export interface IActivity extends Document {
   name: string;
   description?: string;
