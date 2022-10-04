@@ -18,7 +18,7 @@ const createActivitySchema = Joi.object().keys({
   difficulty: Joi.string()
     .valid(...Object.values(ActivityDifficultyEnum))
     .required(),
-  schedule: Joi.date().allow(null),
+  schedule: Joi.date().required(),
   prerequisites: Joi.array().items(Joi.string()),
   subTask: Joi.array().items(Joi.string()),
   isHabit: Joi.boolean().default(false),

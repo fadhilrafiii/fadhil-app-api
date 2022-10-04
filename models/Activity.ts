@@ -73,7 +73,7 @@ const ActivitySchema: Schema<IActivity> = new Schema<IActivity>(
     },
     schedule: {
       type: Date,
-      required: false,
+      required: true,
     },
     isHabit: {
       type: Boolean,
