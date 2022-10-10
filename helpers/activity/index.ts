@@ -11,7 +11,7 @@ export const getTodayActivities = (activities: IActivity[]): IActivity[] => {
   );
 };
 
-export const getActivityFilterFromQuery = (
+export const getActivityFilterByTypeFromQuery = (
   query: Record<string, unknown>,
 ): Record<string, unknown> => {
   let filter: Record<string, unknown> = {};
@@ -48,7 +48,7 @@ export const getActivityScore = (activity: IActivity): number =>
     ? 31 - dayjs().diff(activity.deadline, 'day', true)
     : 0);
 
-export const getRecommendedActivties = (activities: IActivity[]): IActivity[] =>
+export const getRecommendedActivities = (activities: IActivity[]): IActivity[] =>
   activities
     .sort((a: IActivity, b: IActivity) => {
       const scoreA = getActivityScore(a);

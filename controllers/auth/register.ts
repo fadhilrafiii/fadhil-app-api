@@ -1,11 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 import bcrypt from 'bcrypt';
-import Joi from 'joi';
 
 import User from 'models/User';
 
 import { SuccessResponse } from 'helpers/response';
+import Joi from 'helpers/validator';
 import { validateRequest } from 'helpers/validator/request';
 
 const registerSchema = Joi.object().keys({

@@ -1,15 +1,18 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
-import Joi from 'joi';
+import { Console } from 'console';
+import { Dayjs } from 'dayjs';
 
 import Activity from 'models/Activity';
 
-import { getActivityFilterFromQuery, getRecommendedActivties } from 'helpers/activity';
+import dayjs from 'helpers/datetime';
 import { SuccessResponse } from 'helpers/response';
+import Joi from 'helpers/validator';
 import { validateRequest } from 'helpers/validator/request';
 
 const getActivityQuerySchema = Joi.object().keys({
-  type: Joi.string().valid('Today', 'Recommended', 'Habits'),
+  month: Joi.number().min(0).max(11),
+  year: Joi.number(),
 });
 
 export const getActivities: RequestHandler = async (
@@ -19,18 +22,22 @@ export const getActivities: RequestHandler = async (
 ) => {
   try {
     const query = await validateRequest(getActivityQuerySchema, req.query);
+    const filter: Record<string, unknown> = {};
 
-    let activities = [];
-    if (query.type === 'Recommended') {
-      activities = await Activity.find({ userId: req.session.userId });
-      activities = getRecommendedActivties(activities);
-    } else {
-      const filter = getActivityFilterFromQuery(query);
+    if (query.year || query.month) {
+      const now = dayjs();
+      const schedule = dayjs()
+        .year(parseInt(query.year as string) || now.year())
+        .month(parseInt(query.month as string) || now.month());
 
-      activities = await Activity.find({ ...filter, userId: req.session.userId }).sort(
-        '-updatedAt',
-      );
+      const startTime = schedule.startOf(query.month ? 'month' : 'year').toISOString();
+      const endTime = schedule.endOf(query.month ? 'month' : 'year').toISOString();
+      filter.schedule = { $gte: startTime, $lt: endTime };
     }
+
+    const activities = await Activity.find({ ...filter, userId: req.session.userId }).sort(
+      'schedule',
+    );
 
     const response = new SuccessResponse(activities, 'Get Activities Success!');
 

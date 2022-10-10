@@ -1,10 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
-import Joi from 'joi';
-
 import Activity, { ActivityDifficultyEnum, ActivityPriorityEnum } from 'models/Activity';
 
 import { SuccessResponse } from 'helpers/response';
+import Joi from 'helpers/validator';
 import { validateRequest } from 'helpers/validator/request';
 
 const updateActivitySchema = Joi.object().keys({

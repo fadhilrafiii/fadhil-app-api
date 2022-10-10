@@ -4,6 +4,7 @@ import {
   createActivity,
   deleteActivity,
   getActivities,
+  getActivitiesByType,
   getActivityById,
   toggleActivityStatus,
   updateActivity,
@@ -13,6 +14,7 @@ const activityRoutes: Router = express.Router();
 
 activityRoutes.post('/', createActivity);
 activityRoutes.get('/', getActivities);
+activityRoutes.get('/by-type', getActivitiesByType);
 activityRoutes.get('/:id', getActivityById);
 activityRoutes.put('/:id/toggle-status', toggleActivityStatus);
 activityRoutes.put('/:id', updateActivity);
