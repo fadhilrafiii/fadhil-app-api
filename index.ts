@@ -39,6 +39,7 @@ app.use(
     name: 'sid',
     secret: SESSION_SECRET_KEY,
     saveUninitialized: false,
+    proxy: true,
     store: MongoStore.create({
       mongoUrl: DATABASE_URL,
       ttl: SESSION_EXPIRY_ONE_DAY,
@@ -47,10 +48,13 @@ app.use(
       maxAge: SESSION_EXPIRY_ONE_DAY,
       sameSite: process.env.NODE_ENV === 'development',
       secure: process.env.NODE_ENV === 'production',
+      httpOnly: false,
     },
     resave: false,
   }),
 );
+
+console.log(process.env);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', authorize, activityRoutes);
