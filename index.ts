@@ -51,9 +51,9 @@ app.use(
     }),
     cookie: {
       maxAge: SESSION_EXPIRY_ONE_DAY,
-      sameSite: 'none',
+      // sameSite: 'none',
       secure: NODE_ENV === 'production',
-      httpOnly: NODE_ENV === 'production',
+      httpOnly: false,
     },
     resave: false,
   }),
