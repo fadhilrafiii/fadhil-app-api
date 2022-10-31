@@ -43,7 +43,11 @@ app.use(
       mongoUrl: DATABASE_URL,
       ttl: SESSION_EXPIRY_ONE_DAY,
     }),
-    cookie: { maxAge: SESSION_EXPIRY_ONE_DAY },
+    cookie: {
+      maxAge: SESSION_EXPIRY_ONE_DAY,
+      sameSite: process.env.NODE_ENV === 'development',
+      secure: process.env.NODE_ENV === 'production',
+    },
     resave: false,
   }),
 );
