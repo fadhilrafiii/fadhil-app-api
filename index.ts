@@ -31,13 +31,14 @@ mongoose.connect(
 );
 mongoose.connection.on('error', () => console.error('MongoDB Connection Error!'));
 
-if (NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
-
 // General Middlewares: CORS, Session, JSON
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+
+if (NODE_ENV === 'production') {
+  console.log('Setting up reverse proxy config');
+  app.set('trust proxy', 1);
+}
 app.use(
   session({
     name: 'sid',
@@ -52,7 +53,8 @@ app.use(
       maxAge: SESSION_EXPIRY_ONE_DAY,
       sameSite: 'none',
       secure: NODE_ENV === 'production',
-      httpOnly: false,
+      httpOnly: NODE_ENV === 'production',
+      domain: 'https://fadhil-app-web-tmlo.vercel.app/',
     },
     resave: false,
   }),
