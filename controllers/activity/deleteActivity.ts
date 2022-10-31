@@ -26,7 +26,6 @@ export const deleteActivity: RequestHandler = async (
         `No Activity deleted, Activity ${_id} doesn't exist already!`,
         201,
       );
-
     res.status(response.status).json(response);
   } catch (error) {
     next(error);
