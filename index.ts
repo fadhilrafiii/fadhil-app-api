@@ -51,7 +51,7 @@ app.use(
     }),
     cookie: {
       maxAge: SESSION_EXPIRY_ONE_DAY,
-      // sameSite: 'none',
+      sameSite: NODE_ENV === 'production' ? 'none' : undefined,
       secure: NODE_ENV === 'production',
       httpOnly: false,
     },
