@@ -46,7 +46,7 @@ app.use(
     }),
     cookie: {
       maxAge: SESSION_EXPIRY_ONE_DAY,
-      sameSite: process.env.NODE_ENV === 'development',
+      sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
       httpOnly: false,
     },
