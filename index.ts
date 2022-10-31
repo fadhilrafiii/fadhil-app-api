@@ -16,7 +16,7 @@ import { SESSION_EXPIRY_ONE_DAY } from 'constants/auth';
 
 dotenv.config();
 
-const { PORT, DATABASE_URL, SESSION_SECRET_KEY }: NodeJS.ProcessEnv = process.env;
+const { PORT, DATABASE_URL, SESSION_SECRET_KEY, NODE_ENV }: NodeJS.ProcessEnv = process.env;
 
 const app: Express = express();
 
@@ -30,6 +30,10 @@ mongoose.connect(
   () => console.log('Database connection is established!'),
 );
 mongoose.connection.on('error', () => console.error('MongoDB Connection Error!'));
+
+if (NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 // General Middlewares: CORS, Session, JSON
 app.use(cors({ origin: true, credentials: true }));
@@ -47,14 +51,12 @@ app.use(
     cookie: {
       maxAge: SESSION_EXPIRY_ONE_DAY,
       sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       httpOnly: false,
     },
     resave: false,
   }),
 );
-
-console.log(process.env);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', authorize, activityRoutes);
