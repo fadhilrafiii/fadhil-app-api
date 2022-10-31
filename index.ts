@@ -32,7 +32,7 @@ mongoose.connect(
 mongoose.connection.on('error', () => console.error('MongoDB Connection Error!'));
 
 // General Middlewares: CORS, Session, JSON
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: 'https://fadhil-app-web-tmlo.vercel.app', credentials: true }));
 app.use(express.json());
 
 if (NODE_ENV === 'production') {
@@ -54,7 +54,7 @@ app.use(
       sameSite: 'none',
       secure: NODE_ENV === 'production',
       httpOnly: NODE_ENV === 'production',
-      domain: 'https://fadhil-app-web-tmlo.vercel.app/',
+      domain: 'https://fadhil-app-web-tmlo.vercel.app',
     },
     resave: false,
   }),
