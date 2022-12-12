@@ -39,6 +39,7 @@ if (NODE_ENV === 'production') {
   console.log('Setting up reverse proxy config');
   app.set('trust proxy', 1);
 }
+console.log('DATABASE_URL', DATABASE_URL);
 app.use(
   session({
     name: 'sid',
